@@ -36,29 +36,31 @@ Type: PUNCTUATOR, Value: }
 
 
 ##solution
-     #include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
+
 
 vector<vector<string>> findToken(string s) {
     vector<vector<string>> v;
     string word = "";
 
-    
-    set<string> keywords = {"int", "float", "for", "while", "do", "catch", "case", "switch", "auto", "double", 
-                            "struct", "break", "else", "long", "return", "continue", "void", "if", "default", 
+
+    set<string> keywords = {"int", "float", "for", "while", "do", "catch", "case", "switch", "auto", "double",
+                            "struct", "break", "else", "long", "return", "continue", "void", "if", "default",
                             "goto", "const"};
     set<string> operators = {"+", "-", "*", "/", "%", "=", "==", "!=", ">=", "<="};
+    set<char> punctuators = {'(', ')', '{', '}', ';', '=', ',', '.'};
+
 
     for (int i = 0; i < s.size(); i++) {
         char c = s[i];
 
-        
         if (isspace(c) || ispunct(c)) {
             if (!word.empty()) {
-                
+
                 if (keywords.count(word)) {
                     v.push_back({"KEYWORD", word});
-                } else if (word == "==" || word == "!=" || word == ">=" || word == "<=" || operators.count(word)) {
+                } else if (operators.count(word)) {
                     v.push_back({"OPERATOR", word});
                 } else if (isdigit(word[0])) {
                     if (word.find('.') != string::npos) {
@@ -71,38 +73,33 @@ vector<vector<string>> findToken(string s) {
                 } else {
                     v.push_back({"UNKNOWN", word});
                 }
-                word = ""; 
+                word = "";
             }
-            
+
+
             if (ispunct(c)) {
-                string punct(1, c); 
-                if (c == '(') {
-                    v.push_back({"PUNCTUATOR", punct});
-                } else if (c == ')') {
-                    v.push_back({"PUNCTUATOR", punct});
-                } else if (c == '{') {
-                    v.push_back({"PUNCTUATOR", punct});
-                } else if (c == '}') {
-                    v.push_back({"PUNCTUATOR", punct});
-                } else if (c == ';') {
-                    v.push_back({"PUNCTUATOR", punct});
-                } else if (c == '=') {
+                string punct(1, c);
+
+
+                if (operators.count(punct)) {
+                    v.push_back({"OPERATOR", punct});
+                } else if (punctuators.count(c)) {
                     v.push_back({"PUNCTUATOR", punct});
                 } else {
                     v.push_back({"UNKNOWN", punct});
                 }
             }
         } else {
-            
+
             word += c;
         }
     }
 
-    
+
     if (!word.empty()) {
         if (keywords.count(word)) {
             v.push_back({"KEYWORD", word});
-        } else if (word == "==" || word == "!=" || word == ">=" || word == "<=" || operators.count(word)) {
+        } else if (operators.count(word)) {
             v.push_back({"OPERATOR", word});
         } else if (isdigit(word[0])) {
             if (word.find('.') != string::npos) {
@@ -122,7 +119,7 @@ vector<vector<string>> findToken(string s) {
 
 int main() {
     string s;
-    getline(cin, s);  
+    getline(cin, s);
 
     vector<vector<string>> ans = findToken(s);
 
@@ -130,10 +127,7 @@ int main() {
 
 
     for (auto x : ans) {
-        for (auto r : x) {
-            cout << r << " ";
-        }
-        cout << endl;
+        cout << "Type: " << x[0] << ", Value: " << x[1] << endl;
     }
 
     return 0;
